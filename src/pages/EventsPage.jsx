@@ -25,22 +25,20 @@ export const EventsPage = () => {
       <button type="button">Add event</button>
 
       {events.map((event) => (
-        <Link to={`/event/${event.id}`}>
-          <div key={event.id}>
-            <img src={event.image} alt={event.title} />
+        <Link key={event.id} to={`/event/${event.id}`}>
+          <img src={event.image} alt={event.title} />
 
-            {categories
-              .filter((category) => event.categoryIds.includes(category.id))
-              .map((category) => (
-                <span key={category.id}>{category.name}</span>
-              ))}
+          {categories
+            .filter((category) => event.categoryIds.includes(category.id))
+            .map((category) => (
+              <span key={category.id}>{category.name}</span>
+            ))}
 
-            <h3>{event.title}</h3>
-            <p>{event.description}</p>
-            <b>{event.location}</b>
-            <p>Start time: {event.startTime}</p>
-            <p>End time: {event.endTime}</p>
-          </div>
+          <h3>{event.title}</h3>
+          <p>{event.description}</p>
+          <b>{event.location}</b>
+          <p>Start time: {event.startTime}</p>
+          <p>End time: {event.endTime}</p>
         </Link>
       ))}
     </>
