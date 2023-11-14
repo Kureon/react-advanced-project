@@ -1,9 +1,6 @@
 import React from "react";
-import { useState } from "react";
 import { useLoaderData, Link } from "react-router-dom";
 import { Heading } from "@chakra-ui/react";
-
-import { NewEvent } from "../components/NewEvent";
 
 // Load page and data
 export const loader = async () => {
@@ -22,36 +19,23 @@ export const loader = async () => {
 export const EventsPage = () => {
   // Use data
   const { events, categories } = useLoaderData();
-  // Modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [eventData, setEventData] = useState(events);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  // Format event time
+  const formatDateTime = (timeString) => {
+    const date = new Date(timeString);
 
-  // Create new event
-  const createEvent = async (event) => {
-    // Add error handling
-    const response = await fetch("http://localhost:3000/events", {
-      method: "POST",
-      body: JSON.stringify(event),
-      headers: { "Content-Type": "application/json;charset=utf-8" },
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      dateStyle: "short",
+      timeStyle: "short",
     });
-    event.id = (await response.json()).id;
-    setEvents(events.concat(event));
-    closeModal();
+
+    return formatter.format(date);
   };
 
   return (
     <>
       <Heading>List of events</Heading>
-      <button onClick={openModal}>New event</button>
-
-      <NewEvent isModalOpen={isModalOpen} closeModal={closeModal} />
+      <Link to={"/new-event"}>New event</Link>
 
       {events.map((event) => (
         <Link key={event.id} to={`/event/${event.id}`}>
@@ -67,8 +51,8 @@ export const EventsPage = () => {
           <p>{event.description}</p>
           <b>{event.location}</b>
           {/* Change the start time display */}
-          <p>Start time: {event.startTime}</p>
-          <p>End time: {event.endTime}</p>
+          <p>Start time: {formatDateTime(event.startTime)}</p>
+          <p>End time: {formatDateTime(event.endTime)}</p>
         </Link>
       ))}
     </>

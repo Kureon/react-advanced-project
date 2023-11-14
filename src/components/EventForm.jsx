@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Input, Textarea, Button } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
-export const EventForm = ({ closeModal, createEvent }) => {
+export const EventForm = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
@@ -10,17 +11,23 @@ export const EventForm = ({ closeModal, createEvent }) => {
   const [endDate, setEndDate] = useState("");
   const [endTime, setEndTime] = useState("");
 
+  const startTime = startDate + startTime;
+
+  const [isPending, setIsPending] = useState(false);
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    const eventData = { title, description, location };
 
-    createEvent({
-      title,
-      description,
-      location,
-      //   startDate,
-      //   startTime,
-      //   endDate,
-      //   endTime,
+    setIsPending("true");
+
+    fetch("http://localhost:3000/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(eventData),
+    }).then(() => {
+      console.log("New event added");
+      setIsPending(false);
     });
 
     setTitle("");
@@ -42,6 +49,7 @@ export const EventForm = ({ closeModal, createEvent }) => {
           id=""
           onChange={(event) => setTitle(event.target.value)}
           value={title}
+          required
         />
       </div>
       <div>
@@ -53,6 +61,7 @@ export const EventForm = ({ closeModal, createEvent }) => {
           rows="3"
           onChange={(event) => setDescription(event.target.value)}
           value={description}
+          required
         />
       </div>
       <div>
@@ -63,6 +72,7 @@ export const EventForm = ({ closeModal, createEvent }) => {
           id=""
           onChange={(event) => setLocation(event.target.value)}
           value={location}
+          required
         />
       </div>
       <div>
@@ -73,6 +83,7 @@ export const EventForm = ({ closeModal, createEvent }) => {
           id=""
           onChange={(event) => setStartDate(event.target.value)}
           value={startDate}
+          required
         />
       </div>
       <div>
@@ -83,6 +94,7 @@ export const EventForm = ({ closeModal, createEvent }) => {
           id=""
           onChange={(event) => setStartTime(event.target.value)}
           value={startTime}
+          required
         />
       </div>
       <div>
@@ -93,6 +105,7 @@ export const EventForm = ({ closeModal, createEvent }) => {
           id=""
           onChange={(event) => setEndDate(event.target.value)}
           value={endDate}
+          required
         />
       </div>
       <div>
@@ -103,10 +116,14 @@ export const EventForm = ({ closeModal, createEvent }) => {
           id=""
           onChange={(event) => setEndTime(event.target.value)}
           value={endTime}
+          required
         />
       </div>
-      <Button type="submit">Save event</Button>{" "}
-      <Button onClick={closeModal}>Cancel</Button>
+      {!isPending && <Button type="submit">Save event</Button>}
+      {isPending && <Button disabled>Adding event..</Button>}
+      <Link to={"/"}>
+        <Button>Cancel</Button>
+      </Link>
     </form>
   );
 };
