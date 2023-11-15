@@ -1,14 +1,11 @@
-import React from "react";
+import { React, useState } from "react";
 import { useLoaderData, Link } from "react-router-dom";
-import { Heading } from "@chakra-ui/react";
+import { Heading, Input } from "@chakra-ui/react";
 
 // Load page and data
 export const loader = async () => {
   const events = await fetch("http://localhost:3000/events");
   const categories = await fetch("http://localhost:3000/categories");
-
-  // console.log("Events:", events);
-  // console.log("Categories:", categories);
 
   return {
     events: await events.json(),
@@ -17,6 +14,8 @@ export const loader = async () => {
 };
 
 export const EventsPage = () => {
+  const [search, setSearch] = useState("");
+
   // Use data
   const { events, categories } = useLoaderData();
 
@@ -35,6 +34,13 @@ export const EventsPage = () => {
   return (
     <>
       <Heading>List of events</Heading>
+
+      <Input
+        placeholder="Search events"
+        size="md"
+        onChange={(event) => setSearch(event.target.value)}
+      />
+
       <Link to={"/new-event"}>New event</Link>
 
       {events.map((event) => (
@@ -50,7 +56,6 @@ export const EventsPage = () => {
           <h3>{event.title}</h3>
           <p>{event.description}</p>
           <b>{event.location}</b>
-          {/* Change the start time display */}
           <p>Start time: {formatDateTime(event.startTime)}</p>
           <p>End time: {formatDateTime(event.endTime)}</p>
         </Link>

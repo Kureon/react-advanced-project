@@ -1,23 +1,31 @@
 import { useState } from "react";
 import { Input, Textarea, Button } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 
 export const EventForm = () => {
+  const { users, categories } = useLoaderData();
+
+  const [createdBy, setCreatedBy] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState("");
+  const [categoryIds, setCategoryIds] = useState([]);
   const [location, setLocation] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [endTime, setEndTime] = useState("");
-
-  const startTime = startDate + startTime;
+  const [inputStartDate, setInputStartDate] = useState("");
+  const [inputStartTime, setInputStartTime] = useState("");
+  const [inputEndDate, setInputEndDate] = useState("");
+  const [inputEndTime, setInputEndTime] = useState("");
 
   const [isPending, setIsPending] = useState(false);
 
+  const startTime = inputStartDate + "T" + inputStartTime;
+  const endTime = inputEndDate + "T" + inputEndTime;
+
+  console.log(categoryIds);
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const eventData = { title, description, location };
+    const eventData = { createdBy, title, description, image, categoryIds, location, startTime, endTime };
 
     setIsPending("true");
 
@@ -30,17 +38,29 @@ export const EventForm = () => {
       setIsPending(false);
     });
 
+    setCreatedBy("");
     setTitle("");
     setDescription("");
+    setImage("");
+    setCategoryIds();
     setLocation("");
-    setStartDate("");
-    setStartTime("");
-    setEndDate("");
-    setEndTime("");
+    setInputStartDate("");
+    setInputStartTime("");
+    setInputEndDate("");
+    setInputEndTime("");
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      <div>
+        {/* Created by also not sending an id */}
+        <label htmlFor="author">Author</label>
+        <select name="author" id="" onChange={(event) => setCreatedBy(event.target.value)} value={createdBy} required>
+          {users.map((user) => (
+            <option key={user.id} value={user.id}>{user.name}</option>
+          ))}
+        </select>
+      </div>
       <div>
         <label htmlFor="title">Title</label>
         <Input
@@ -65,6 +85,35 @@ export const EventForm = () => {
         />
       </div>
       <div>
+        <label htmlFor="image">Image url</label>
+        <Input
+          type="text"
+          name="image"
+          id=""
+          onChange={(event) => setImage(event.target.value)}
+          value={image}
+          required
+        />
+      </div>
+      <div>
+        {/* Fix or change categories so multiple are being added */}
+        <label htmlFor="categories">Categories</label>
+        {categories.map((category) => (
+          <div key={category.id}>
+            <input
+              type="checkbox"
+              name={category.name}
+              id=""
+              onChange={(event) => setCategoryIds(event.target.value)}
+              value={category.id}
+              required
+            />
+            <label htmlFor={category.name}>{category.name}</label>
+          </div>
+        ))}
+
+      </div>
+      <div>
         <label htmlFor="location">Location</label>
         <Input
           type="text"
@@ -81,8 +130,8 @@ export const EventForm = () => {
           type="date"
           name="start-date"
           id=""
-          onChange={(event) => setStartDate(event.target.value)}
-          value={startDate}
+          onChange={(event) => setInputStartDate(event.target.value)}
+          value={inputStartDate}
           required
         />
       </div>
@@ -92,8 +141,8 @@ export const EventForm = () => {
           type="time"
           name="start-time"
           id=""
-          onChange={(event) => setStartTime(event.target.value)}
-          value={startTime}
+          onChange={(event) => setInputStartTime(event.target.value)}
+          value={inputStartTime}
           required
         />
       </div>
@@ -103,8 +152,8 @@ export const EventForm = () => {
           type="date"
           name="end-date"
           id=""
-          onChange={(event) => setEndDate(event.target.value)}
-          value={endDate}
+          onChange={(event) => setInputEndDate(event.target.value)}
+          value={inputEndDate}
           required
         />
       </div>
@@ -114,8 +163,8 @@ export const EventForm = () => {
           type="time"
           name="end-time"
           id=""
-          onChange={(event) => setEndTime(event.target.value)}
-          value={endTime}
+          onChange={(event) => setInputEndTime(event.target.value)}
+          value={inputEndTime}
           required
         />
       </div>
