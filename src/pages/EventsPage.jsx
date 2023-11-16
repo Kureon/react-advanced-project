@@ -43,23 +43,43 @@ export const EventsPage = () => {
 
       <Link to={"/new-event"}>New event</Link>
 
-      {events.map((event) => (
-        <Link key={event.id} to={`/event/${event.id}`}>
-          <img src={event.image} alt={event.title} />
+      {events
+        .filter((event) => {
+          const nameMatch = event.title
+            .toLowerCase()
+            .includes(search.toLowerCase());
 
-          {categories
-            .filter((category) => event.categoryIds.includes(category.id))
-            .map((category) => (
-              <span key={category.id}>{category.name}</span>
-            ))}
+          const categoryMatch = Array.isArray(event.categoryIds)
+            ? event.categoryIds
+                .map(
+                  (categoryId) =>
+                    categories.find((category) => category.id === categoryId)
+                      ?.name
+                )
+                .some((categoryName) =>
+                  categoryName.toLowerCase().includes(search.toLowerCase())
+                )
+            : false;
 
-          <h3>{event.title}</h3>
-          <p>{event.description}</p>
-          <b>{event.location}</b>
-          <p>Start time: {formatDateTime(event.startTime)}</p>
-          <p>End time: {formatDateTime(event.endTime)}</p>
-        </Link>
-      ))}
+          return nameMatch || categoryMatch;
+        })
+        .map((event) => (
+          <Link key={event.id} to={`/event/${event.id}`}>
+            <img src={event.image} alt={event.title} />
+
+            {categories
+              .filter((category) => event.categoryIds.includes(category.id))
+              .map((category) => (
+                <span key={category.id}>{category.name}</span>
+              ))}
+
+            <h3>{event.title}</h3>
+            <p>{event.description}</p>
+            <b>{event.location}</b>
+            <p>Start time: {formatDateTime(event.startTime)}</p>
+            <p>End time: {formatDateTime(event.endTime)}</p>
+          </Link>
+        ))}
     </>
   );
 };

@@ -66,15 +66,30 @@
       "endTime": "2023-03-09T07:00:00.000Z"
     },
     {
-      "createdBy": "",
-      "title": "Test event",
-      "description": "Description",
-      "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/The_Event_2010_Intertitle.svg/1200px-The_Event_2010_Intertitle.svg.png",
-      "categoryIds": "3",
-      "location": "Wikipedia",
-      "startTime": "2023-11-15T16:00",
-      "endTime": "2023-11-15T20:00",
+      "createdBy": 1,
+      "title": "Test",
+      "description": "Test",
+      "image": "Test",
+      "categoryIds": [
+        2
+      ],
+      "location": "Test",
+      "startTime": "2023-11-16T12:15",
+      "endTime": "2023-11-16T13:15",
       "id": 5
+    },
+    {
+      "createdBy": 1,
+      "title": "Test",
+      "description": "Test",
+      "image": "Test",
+      "categoryIds": [
+        2
+      ],
+      "location": "Test",
+      "startTime": "2023-11-16T12:15",
+      "endTime": "2023-11-16T13:15",
+      "id": 6
     }
   ],
   "categories": [

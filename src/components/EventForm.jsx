@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { Input, Textarea, Button } from "@chakra-ui/react";
-import { Link, useLoaderData } from "react-router-dom";
 
 export const EventForm = () => {
   const { users, categories } = useLoaderData();
+  const navigate = useNavigate();
 
-  const [createdBy, setCreatedBy] = useState("");
+  const [createdBy, setCreatedBy] = useState(1);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
@@ -23,9 +24,30 @@ export const EventForm = () => {
 
   console.log(categoryIds);
 
+  const handleCheckboxChange = (event) => {
+    const categoryId = parseInt(event.target.value, 10);
+
+    if (event.target.checked) {
+      setCategoryIds((pre) => [...pre, categoryId]);
+    } else {
+      setCategoryIds((pre) => {
+        return [...pre.filter((item) => item !== categoryId)];
+      });
+    }
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const eventData = { createdBy, title, description, image, categoryIds, location, startTime, endTime };
+    const eventData = {
+      createdBy,
+      title,
+      description,
+      image,
+      categoryIds,
+      location,
+      startTime,
+      endTime,
+    };
 
     setIsPending("true");
 
@@ -36,28 +58,25 @@ export const EventForm = () => {
     }).then(() => {
       console.log("New event added");
       setIsPending(false);
+      navigate("/");
     });
-
-    setCreatedBy("");
-    setTitle("");
-    setDescription("");
-    setImage("");
-    setCategoryIds();
-    setLocation("");
-    setInputStartDate("");
-    setInputStartTime("");
-    setInputEndDate("");
-    setInputEndTime("");
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        {/* Created by also not sending an id */}
         <label htmlFor="author">Author</label>
-        <select name="author" id="" onChange={(event) => setCreatedBy(event.target.value)} value={createdBy} required>
+        <select
+          name="author"
+          id=""
+          onChange={(event) => setCreatedBy(event.target.value)}
+          value={createdBy}
+          required
+        >
           {users.map((user) => (
-            <option key={user.id} value={user.id}>{user.name}</option>
+            <option key={user.id} value={user.id}>
+              {user.name}
+            </option>
           ))}
         </select>
       </div>
@@ -96,22 +115,19 @@ export const EventForm = () => {
         />
       </div>
       <div>
-        {/* Fix or change categories so multiple are being added */}
         <label htmlFor="categories">Categories</label>
         {categories.map((category) => (
           <div key={category.id}>
             <input
               type="checkbox"
               name={category.name}
-              id=""
-              onChange={(event) => setCategoryIds(event.target.value)}
+              id={`category-${category.id}`}
+              onChange={handleCheckboxChange}
               value={category.id}
-              required
             />
             <label htmlFor={category.name}>{category.name}</label>
           </div>
         ))}
-
       </div>
       <div>
         <label htmlFor="location">Location</label>
