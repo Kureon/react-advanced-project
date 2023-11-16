@@ -27,7 +27,7 @@ export const EventPage = ({ events }) => {
 
   return (
     <>
-      Test {events}
+      Test {event}
       {events.map((event) => (
         <div key={event.id}>
           <Heading>{event.title}</Heading>
