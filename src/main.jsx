@@ -1,7 +1,9 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
+// import { EventPage, loader as postLoader } from "./pages/EventPage";
 import { EventPage } from "./pages/EventPage";
+
 import { EventsPage, loader as postListLoader } from "./pages/EventsPage";
 import { NewEventPage, loader as eventFormLoader } from "./pages/NewEventPage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
