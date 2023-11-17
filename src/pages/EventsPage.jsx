@@ -13,23 +13,23 @@ export const loader = async () => {
   };
 };
 
+// Format event time
+const formatDateTime = (timeString) => {
+  const date = new Date(timeString);
+
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+
+  return formatter.format(date);
+};
+
 export const EventsPage = () => {
   const [search, setSearch] = useState("");
 
   // Use data
   const { events, categories } = useLoaderData();
-
-  // Format event time
-  const formatDateTime = (timeString) => {
-    const date = new Date(timeString);
-
-    const formatter = new Intl.DateTimeFormat("en-US", {
-      dateStyle: "short",
-      timeStyle: "short",
-    });
-
-    return formatter.format(date);
-  };
 
   return (
     <>
@@ -73,7 +73,7 @@ export const EventsPage = () => {
                 <span key={category.id}>{category.name}</span>
               ))}
 
-            <h3>{event.title}</h3>
+            <Heading>{event.title}</Heading>
             <p>{event.description}</p>
             <b>{event.location}</b>
             <p>Start time: {formatDateTime(event.startTime)}</p>

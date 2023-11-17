@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Input, Textarea, Button } from "@chakra-ui/react";
 
-export const EventForm = () => {
-  const { users, categories } = useLoaderData();
-  const navigate = useNavigate();
-
-  const [createdBy, setCreatedBy] = useState(1);
+export const EditForm = ({
+  onClose,
+  selectedEvent,
+  users,
+  event,
+  categories,
+}) => {
+  const [createdBy, setCreatedBy] = useState();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
@@ -19,22 +21,40 @@ export const EventForm = () => {
 
   const [isPending, setIsPending] = useState(false);
 
-  const startTime = inputStartDate + "T" + inputStartTime;
-  const endTime = inputEndDate + "T" + inputEndTime;
-
-  console.log(categoryIds);
-
-  const handleCheckboxChange = (event) => {
-    const categoryId = parseInt(event.target.value, 10);
-
-    if (event.target.checked) {
-      setCategoryIds((pre) => [...pre, categoryId]);
+  const handleCheckboxChange = (categoryId) => {
+    if (categoryIds.includes(categoryId)) {
+      setCategoryIds((prevIds) => prevIds.filter((id) => id !== categoryId));
     } else {
-      setCategoryIds((pre) => {
-        return [...pre.filter((item) => item !== categoryId)];
-      });
+      setCategoryIds((prevIds) => [...prevIds, categoryId]);
     }
   };
+
+  let [dateStart, timeStart] = event.startTime.split("T");
+  if (timeStart.length > 5) {
+    timeStart = timeStart.slice(0, 5);
+  }
+
+  let [dateEnd, timeEnd] = event.endTime.split("T");
+  if (timeEnd.length > 5) {
+    timeEnd = timeEnd.slice(0, 5);
+  }
+
+  useEffect(() => {
+    // Update state when event prop changes
+    setCreatedBy(event.createdBy || "");
+    setTitle(event.title || "");
+    setDescription(event.description || "");
+    setImage(event.image || "");
+    setCategoryIds(event.categoryIds || []);
+    setLocation(event.location || "");
+    setInputStartDate(dateStart || "");
+    setInputStartTime(timeStart || "");
+    setInputEndDate(dateEnd || "");
+    setInputEndTime(timeEnd || "");
+  }, [event]);
+
+  const startTime = inputStartDate + "T" + inputStartTime;
+  const endTime = inputEndDate + "T" + inputEndTime;
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -49,16 +69,15 @@ export const EventForm = () => {
       endTime,
     };
 
-    setIsPending(true);
+    setIsPending("true");
 
-    fetch("http://localhost:3000/events", {
-      method: "POST",
+    fetch(`http://localhost:3000/events/$`, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(eventData),
     }).then(() => {
-      console.log("New event added");
+      console.log("Updated event added");
       setIsPending(false);
-      navigate("/");
     });
   };
 
@@ -121,9 +140,10 @@ export const EventForm = () => {
             <input
               type="checkbox"
               name={category.name}
-              id={`category-${category.id}`}
-              onChange={handleCheckboxChange}
+              id=""
+              onChange={() => handleCheckboxChange(category.id)}
               value={category.id}
+              checked={categoryIds.includes(category.id)}
             />
             <label htmlFor={category.name}>{category.name}</label>
           </div>
@@ -186,9 +206,7 @@ export const EventForm = () => {
       </div>
       {!isPending && <Button type="submit">Save event</Button>}
       {isPending && <Button disabled>Adding event..</Button>}
-      <Link to={"/"}>
-        <Button>Cancel</Button>
-      </Link>
+      <Button onClick={onClose}>Cancel</Button>
     </form>
   );
 };
