@@ -1,7 +1,8 @@
 import { React, useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { ModalComponent } from "../components/ModalComponent";
 import { Heading, Button } from "@chakra-ui/react";
+import { AlertDelete } from "../components/AlertDelete";
 
 // Load page and data
 export const loader = async ({ params }) => {
@@ -32,16 +33,30 @@ export const EventPage = () => {
   const { users, event, categories } = useLoaderData();
 
   const [editOpen, setEditOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState();
-
-  const openEdit = (event) => {
-    setSelectedEvent(event);
+  const openEdit = () => {
     setEditOpen(true);
   };
-
   const editClose = () => {
     setEditOpen(false);
   };
+
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const openDelete = () => {
+    setDeleteOpen(true);
+  };
+  const deleteClose = () => {
+    setDeleteOpen(false);
+  };
+
+  const navigate = useNavigate();
+
+  const deleteEvent = () => {
+    fetch(`http://localhost:3000/events/${event.id}`, {
+      method: 'DELETE'
+    }).then(() => {
+      navigate("/");
+    })
+  }
 
   return (
     <>
@@ -71,6 +86,7 @@ export const EventPage = () => {
 
         <Button onClick={() => openEdit(event)}>Edit event</Button>
 
+
         {editOpen && (
           <>
             <ModalComponent
@@ -80,6 +96,14 @@ export const EventPage = () => {
               event={event}
               categories={categories}
             />
+          </>
+        )}
+
+        <Button onClick={() => openDelete()}>Delete event</Button>
+
+        {deleteOpen && (
+          <>
+            <AlertDelete isOpen={deleteOpen} onClose={deleteClose} event={event} deleteEvent={deleteEvent} />
           </>
         )}
       </div>

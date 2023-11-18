@@ -13,7 +13,6 @@
   ],
   "events": [
     {
-      "id": 1,
       "createdBy": 1,
       "title": "Trampoline party",
       "description": "Bounce around with your friends",
@@ -23,7 +22,8 @@
       ],
       "location": "My back yard",
       "startTime": "2023-03-10T18:00",
-      "endTime": "2023-03-10T17:00:00.000Z"
+      "endTime": "2023-03-10T19:00",
+      "id": 1
     },
     {
       "id": 2,
@@ -64,32 +64,6 @@
       "location": "Shavasana Yoga School",
       "startTime": "2023-03-09T06:00:00.000Z",
       "endTime": "2023-03-09T07:00:00.000Z"
-    },
-    {
-      "createdBy": 1,
-      "title": "Test",
-      "description": "Test",
-      "image": "Test",
-      "categoryIds": [
-        2
-      ],
-      "location": "Test",
-      "startTime": "2023-11-16T12:15",
-      "endTime": "2023-11-16T13:15",
-      "id": 5
-    },
-    {
-      "createdBy": 1,
-      "title": "Test",
-      "description": "Test",
-      "image": "Test",
-      "categoryIds": [
-        2
-      ],
-      "location": "Test",
-      "startTime": "2023-11-16T12:15",
-      "endTime": "2023-11-16T13:15",
-      "id": 6
     }
   ],
   "categories": [

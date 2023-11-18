@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Input, Textarea, Button } from "@chakra-ui/react";
+import { Input, Textarea, Button, useToast } from "@chakra-ui/react";
 
 export const EditForm = ({
   onClose,
-  selectedEvent,
   users,
   event,
   categories,
@@ -20,6 +19,8 @@ export const EditForm = ({
   const [inputEndTime, setInputEndTime] = useState("");
 
   const [isPending, setIsPending] = useState(false);
+
+  const toast = useToast()
 
   const handleCheckboxChange = (categoryId) => {
     if (categoryIds.includes(categoryId)) {
@@ -56,8 +57,8 @@ export const EditForm = ({
   const startTime = inputStartDate + "T" + inputStartTime;
   const endTime = inputEndDate + "T" + inputEndTime;
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const eventData = {
       createdBy,
       title,
@@ -71,14 +72,23 @@ export const EditForm = ({
 
     setIsPending("true");
 
-    fetch(`http://localhost:3000/events/$`, {
-      method: "PATCH",
+    const response = await fetch(`http://localhost:3000/events/${event.id}`, {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(eventData),
-    }).then(() => {
-      console.log("Updated event added");
-      setIsPending(false);
     });
+
+    if (response.ok) {
+      console.log("Event updated successfully");
+      setIsPending(false);
+      onClose();
+      toast({ title: 'Update success', description: 'the event has been successfully updated', status: 'success', duration: 5000, isCloseable: true, })
+      // How can I update the eventPage with the new data without a page refresh
+    } else {
+      console.error(`Error updating event: ${response.statusText}`);
+      onClose();
+      toast({ title: 'Update failed', description: 'An error occurred during the update', status: 'error', duration: 5000, isCloseable: true, })
+    }
   };
 
   return (
