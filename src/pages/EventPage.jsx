@@ -1,8 +1,16 @@
 import { React, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { ModalComponent } from "../components/ModalComponent";
-import { Heading, Button } from "@chakra-ui/react";
 import { AlertDelete } from "../components/AlertDelete";
+import {
+  Grid,
+  Heading,
+  Text,
+  Tag,
+  Image,
+  Button,
+  GridItem,
+} from "@chakra-ui/react";
 
 // Load page and data
 export const loader = async ({ params }) => {
@@ -52,40 +60,73 @@ export const EventPage = () => {
 
   const deleteEvent = () => {
     fetch(`http://localhost:3000/events/${event.id}`, {
-      method: 'DELETE'
+      method: "DELETE",
     }).then(() => {
       navigate("/");
-    })
-  }
+    });
+  };
 
   return (
     <>
-      <div>
-        <img src={event.image} alt={event.title} />
+      <Grid templateColumns="repeat(2, 1fr)" gap={2}>
+        <GridItem colSpan={2}>
+          <Image
+            boxSize="100%"
+            h="350px"
+            objectFit="cover"
+            src={event.image}
+            alt={event.title}
+          />
+        </GridItem>
+        <div>
+          <Heading>{event.title}</Heading>
 
-        {categories
-          .filter((category) => event.categoryIds.includes(category.id))
-          .map((category) => (
-            <span key={category.id}>{category.name}</span>
-          ))}
+          <Text mb="2">{event.description}</Text>
+          <Text as="b">{event.location}</Text>
+          <Text>Start time: {formatDateTime(event.startTime)}</Text>
+          <Text>End time: {formatDateTime(event.endTime)}</Text>
 
-        <Heading>{event.title}</Heading>
-        <p>{event.description}</p>
-        <b>{event.location}</b>
-        <p>Start time: {formatDateTime(event.startTime)}</p>
-        <p>End time: {formatDateTime(event.endTime)}</p>
+          {categories
+            .filter((category) => event.categoryIds.includes(category.id))
+            .map((category) => (
+              <Tag key={category.id}>{category.name}</Tag>
+            ))}
 
-        {users
-          .filter((user) => event.categoryIds.includes(user.id))
-          .map((user) => (
-            <div key={user.id}>
-              <img src={user.image} alt={user.name} />
-              <p>Created by: {user.name}</p>
-            </div>
-          ))}
-
-        <Button onClick={() => openEdit(event)}>Edit event</Button>
-
+          {users
+            .filter((user) => event.categoryIds.includes(user.id))
+            .map((user) => (
+              <div key={user.id}>
+                <Text mt="4" display="block">
+                  Created by:
+                </Text>
+                <div>
+                  <Image
+                    borderRadius="full"
+                    boxSize="100px"
+                    src={user.image}
+                    alt={user.name}
+                  />
+                  {user.name}
+                </div>
+              </div>
+            ))}
+        </div>
+        <div>
+          <Button
+            mb="4"
+            style={{ display: "block", width: "100%" }}
+            onClick={() => openEdit(event)}
+          >
+            Edit event
+          </Button>
+          <Button
+            style={{ display: "block", width: "100%" }}
+            colorScheme="red"
+            onClick={() => openDelete()}
+          >
+            Delete event
+          </Button>
+        </div>
 
         {editOpen && (
           <>
@@ -99,14 +140,17 @@ export const EventPage = () => {
           </>
         )}
 
-        <Button onClick={() => openDelete()}>Delete event</Button>
-
         {deleteOpen && (
           <>
-            <AlertDelete isOpen={deleteOpen} onClose={deleteClose} event={event} deleteEvent={deleteEvent} />
+            <AlertDelete
+              isOpen={deleteOpen}
+              onClose={deleteClose}
+              event={event}
+              deleteEvent={deleteEvent}
+            />
           </>
         )}
-      </div>
+      </Grid>
     </>
   );
 };

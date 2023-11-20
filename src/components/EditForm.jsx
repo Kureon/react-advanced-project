@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
-import { Input, Textarea, Button, useToast } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import {
+  Input,
+  Textarea,
+  Button,
+  useToast,
+  Checkbox,
+  Flex,
+  Spacer,
+} from "@chakra-ui/react";
 
-export const EditForm = ({
-  onClose,
-  users,
-  event,
-  categories,
-}) => {
+export const EditForm = ({ onClose, users, event, categories }) => {
   const [createdBy, setCreatedBy] = useState();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -20,7 +24,8 @@ export const EditForm = ({
 
   const [isPending, setIsPending] = useState(false);
 
-  const toast = useToast()
+  const navigate = useNavigate();
+  const toast = useToast();
 
   const handleCheckboxChange = (categoryId) => {
     if (categoryIds.includes(categoryId)) {
@@ -82,12 +87,25 @@ export const EditForm = ({
       console.log("Event updated successfully");
       setIsPending(false);
       onClose();
-      toast({ title: 'Update success', description: 'the event has been successfully updated', status: 'success', duration: 5000, isCloseable: true, })
+      toast({
+        title: "Update success",
+        description: "the event has been successfully updated",
+        status: "success",
+        duration: 5000,
+        isCloseable: true,
+      });
       // How can I update the eventPage with the new data without a page refresh
+      navigate("/");
     } else {
       console.error(`Error updating event: ${response.statusText}`);
       onClose();
-      toast({ title: 'Update failed', description: 'An error occurred during the update', status: 'error', duration: 5000, isCloseable: true, })
+      toast({
+        title: "Update failed",
+        description: "An error occurred during the update",
+        status: "error",
+        duration: 5000,
+        isCloseable: true,
+      });
     }
   };
 
@@ -147,7 +165,7 @@ export const EditForm = ({
         <label htmlFor="categories">Categories</label>
         {categories.map((category) => (
           <div key={category.id}>
-            <input
+            <Checkbox
               type="checkbox"
               name={category.name}
               id=""
@@ -214,9 +232,22 @@ export const EditForm = ({
           required
         />
       </div>
-      {!isPending && <Button type="submit">Save event</Button>}
-      {isPending && <Button disabled>Adding event..</Button>}
-      <Button onClick={onClose}>Cancel</Button>
+      <Flex>
+        <Spacer />
+        <Button mt="2" onClick={onClose}>
+          Cancel
+        </Button>
+        {!isPending && (
+          <Button mt="2" ml="2" type="submit">
+            Save event
+          </Button>
+        )}
+        {isPending && (
+          <Button mt="2" ml="2" disabled>
+            Adding event..
+          </Button>
+        )}
+      </Flex>
     </form>
   );
 };

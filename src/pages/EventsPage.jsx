@@ -1,6 +1,19 @@
 import { React, useState } from "react";
 import { useLoaderData, Link } from "react-router-dom";
-import { Heading, Input } from "@chakra-ui/react";
+import {
+  Heading,
+  Input,
+  SimpleGrid,
+  Card,
+  CardBody,
+  AspectRatio,
+  Image,
+  Text,
+  Tag,
+  Button,
+  Flex,
+  Spacer,
+} from "@chakra-ui/react";
 
 // Load page and data
 export const loader = async () => {
@@ -33,53 +46,70 @@ export const EventsPage = () => {
 
   return (
     <>
-      <Heading>List of events</Heading>
+      <Flex mt="4" mb="4">
+        <Heading>List of events</Heading>
+        <Spacer />
+        <Button>
+          <Link to={"/new-event"}>New event</Link>
+        </Button>
+      </Flex>
 
       <Input
+        mb="2"
         placeholder="Search events"
         size="md"
         onChange={(event) => setSearch(event.target.value)}
       />
 
-      <Link to={"/new-event"}>New event</Link>
+      <SimpleGrid minChildWidth="250px" gap={6}>
+        {events
+          .filter((event) => {
+            const nameMatch = event.title
+              .toLowerCase()
+              .includes(search.toLowerCase());
 
-      {events
-        .filter((event) => {
-          const nameMatch = event.title
-            .toLowerCase()
-            .includes(search.toLowerCase());
+            const categoryMatch = Array.isArray(event.categoryIds)
+              ? event.categoryIds
+                  .map(
+                    (categoryId) =>
+                      categories.find((category) => category.id === categoryId)
+                        ?.name
+                  )
+                  .some((categoryName) =>
+                    categoryName.toLowerCase().includes(search.toLowerCase())
+                  )
+              : false;
 
-          const categoryMatch = Array.isArray(event.categoryIds)
-            ? event.categoryIds
-                .map(
-                  (categoryId) =>
-                    categories.find((category) => category.id === categoryId)
-                      ?.name
-                )
-                .some((categoryName) =>
-                  categoryName.toLowerCase().includes(search.toLowerCase())
-                )
-            : false;
+            return nameMatch || categoryMatch;
+          })
+          .map((event) => (
+            <Link key={event.id} to={`/event/${event.id}`}>
+              <Card mt="2" mb="2" h="450px">
+                <CardBody>
+                  <AspectRatio ratio={16 / 9}>
+                    <Image src={event.image} alt={event.title} />
+                  </AspectRatio>
 
-          return nameMatch || categoryMatch;
-        })
-        .map((event) => (
-          <Link key={event.id} to={`/event/${event.id}`}>
-            <img src={event.image} alt={event.title} />
+                  <Heading noOfLines={2}>{event.title}</Heading>
+                  <Text mb="2">{event.description}</Text>
+                  <Text as="b">{event.location}</Text>
+                  <Text>Start time: {formatDateTime(event.startTime)}</Text>
+                  <Text>End time: {formatDateTime(event.endTime)}</Text>
 
-            {categories
-              .filter((category) => event.categoryIds.includes(category.id))
-              .map((category) => (
-                <span key={category.id}>{category.name}</span>
-              ))}
-
-            <Heading>{event.title}</Heading>
-            <p>{event.description}</p>
-            <b>{event.location}</b>
-            <p>Start time: {formatDateTime(event.startTime)}</p>
-            <p>End time: {formatDateTime(event.endTime)}</p>
-          </Link>
-        ))}
+                  {categories
+                    .filter((category) =>
+                      event.categoryIds.includes(category.id)
+                    )
+                    .map((category) => (
+                      <Tag mt={3} mb={3} mr={1} key={category.id}>
+                        {category.name}
+                      </Tag>
+                    ))}
+                </CardBody>
+              </Card>
+            </Link>
+          ))}
+      </SimpleGrid>
     </>
   );
 };

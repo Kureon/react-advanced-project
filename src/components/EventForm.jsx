@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import { Input, Textarea, Button } from "@chakra-ui/react";
+import {
+  Input,
+  Textarea,
+  Button,
+  Checkbox,
+  Flex,
+  Spacer,
+} from "@chakra-ui/react";
 
 export const EventForm = () => {
   const { users, categories } = useLoaderData();
@@ -118,7 +125,7 @@ export const EventForm = () => {
         <label htmlFor="categories">Categories</label>
         {categories.map((category) => (
           <div key={category.id}>
-            <input
+            <Checkbox
               type="checkbox"
               name={category.name}
               id={`category-${category.id}`}
@@ -184,11 +191,22 @@ export const EventForm = () => {
           required
         />
       </div>
-      {!isPending && <Button type="submit">Save event</Button>}
-      {isPending && <Button disabled>Adding event..</Button>}
-      <Link to={"/"}>
-        <Button>Cancel</Button>
-      </Link>
+      <Flex>
+        <Spacer />
+        <Link to={"/"}>
+          <Button mt="2">Cancel</Button>
+        </Link>
+        {!isPending && (
+          <Button mt="2" ml="2" type="submit">
+            Save event
+          </Button>
+        )}
+        {isPending && (
+          <Button mt="2" ml="2" disabled>
+            Adding event..
+          </Button>
+        )}
+      </Flex>
     </form>
   );
 };
