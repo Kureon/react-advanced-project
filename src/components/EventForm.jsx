@@ -13,6 +13,7 @@ export const EventForm = () => {
   const { users, categories } = useLoaderData();
   const navigate = useNavigate();
 
+  // USE STATES
   const [createdBy, setCreatedBy] = useState(1);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -26,11 +27,13 @@ export const EventForm = () => {
 
   const [isPending, setIsPending] = useState(false);
 
+  // FORMAT THE INPUT DATA TO MATCH THAT IN THE JSON FILE
   const startTime = inputStartDate + "T" + inputStartTime;
   const endTime = inputEndDate + "T" + inputEndTime;
 
-  console.log(categoryIds);
+  // console.log(categoryIds);
 
+  // SELECT OR DESELECT THE RIGHT CATEGORY ID WITH THE CHECKBOX
   const handleCheckboxChange = (event) => {
     const categoryId = parseInt(event.target.value, 10);
 
@@ -43,6 +46,8 @@ export const EventForm = () => {
     }
   };
 
+
+  // SEND NEW EVENT DATA TO THE JSON FILE
   const handleSubmit = (event) => {
     event.preventDefault();
     const eventData = {
@@ -69,6 +74,7 @@ export const EventForm = () => {
     });
   };
 
+  // SHOW THE FORM
   return (
     <form onSubmit={handleSubmit}>
       <div>

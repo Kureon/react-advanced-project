@@ -11,6 +11,8 @@ import {
 } from "@chakra-ui/react";
 
 export const EditForm = ({ onClose, users, event, categories }) => {
+
+  // USE STATES
   const [createdBy, setCreatedBy] = useState();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -27,6 +29,7 @@ export const EditForm = ({ onClose, users, event, categories }) => {
   const navigate = useNavigate();
   const toast = useToast();
 
+  // SELECT OR DESELECT THE RIGHT CATEGORY ID WITH THE CHECKBOX
   const handleCheckboxChange = (categoryId) => {
     if (categoryIds.includes(categoryId)) {
       setCategoryIds((prevIds) => prevIds.filter((id) => id !== categoryId));
@@ -35,6 +38,7 @@ export const EditForm = ({ onClose, users, event, categories }) => {
     }
   };
 
+  // FOMRAT STRING TO DATABASE FORMAT
   let [dateStart, timeStart] = event.startTime.split("T");
   if (timeStart.length > 5) {
     timeStart = timeStart.slice(0, 5);
@@ -46,7 +50,7 @@ export const EditForm = ({ onClose, users, event, categories }) => {
   }
 
   useEffect(() => {
-    // Update state when event prop changes
+    // UPDATE STATE WHEN EVENT PROP CHANGES
     setCreatedBy(event.createdBy || "");
     setTitle(event.title || "");
     setDescription(event.description || "");
@@ -59,9 +63,11 @@ export const EditForm = ({ onClose, users, event, categories }) => {
     setInputEndTime(timeEnd || "");
   }, [event]);
 
+  // JOIN DATE AND TIME FOR DATABASE
   const startTime = inputStartDate + "T" + inputStartTime;
   const endTime = inputEndDate + "T" + inputEndTime;
 
+  // SUBMIT THE EDITED DATA TO THE RIGHT EVENT
   const handleSubmit = async (e) => {
     e.preventDefault();
     const eventData = {
@@ -83,6 +89,7 @@ export const EditForm = ({ onClose, users, event, categories }) => {
       body: JSON.stringify(eventData),
     });
 
+    // ON SUCCES SHOW A TOAST WITH THE SUCCES MESSAGE & NAVIGATE TO THE EVENTS LIST PAGE
     if (response.ok) {
       console.log("Event updated successfully");
       setIsPending(false);
@@ -96,6 +103,8 @@ export const EditForm = ({ onClose, users, event, categories }) => {
       });
       // How can I update the eventPage with the new data without a page refresh
       navigate("/");
+
+      // ON FAILURE SHOW THE ERROR MESSAGE
     } else {
       console.error(`Error updating event: ${response.statusText}`);
       onClose();
@@ -109,6 +118,7 @@ export const EditForm = ({ onClose, users, event, categories }) => {
     }
   };
 
+  // SHOW THE FORM
   return (
     <form onSubmit={handleSubmit}>
       <div>

@@ -1,7 +1,7 @@
 import { EventForm } from "../components/EventForm";
 import { Heading } from "@chakra-ui/react";
 
-// Load page and data
+// LOAD DATA
 export const loader = async () => {
   const users = await fetch("http://localhost:3000/users");
   const categories = await fetch("http://localhost:3000/categories");

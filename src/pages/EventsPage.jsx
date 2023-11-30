@@ -15,7 +15,7 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 
-// Load page and data
+// LOAD EVENTS AND CATEGORIES DATA FROM JSON FILE
 export const loader = async () => {
   const events = await fetch("http://localhost:3000/events");
   const categories = await fetch("http://localhost:3000/categories");
@@ -26,7 +26,7 @@ export const loader = async () => {
   };
 };
 
-// Format event time
+// FORMATE EVENT TIME TO STRING
 const formatDateTime = (timeString) => {
   const date = new Date(timeString);
 
@@ -38,10 +38,11 @@ const formatDateTime = (timeString) => {
   return formatter.format(date);
 };
 
+// USE STATE FOR EVENT PAGE
 export const EventsPage = () => {
   const [search, setSearch] = useState("");
 
-  // Use data
+  // USE DATA FROM JSON FILE
   const { events, categories } = useLoaderData();
 
   return (
@@ -49,11 +50,14 @@ export const EventsPage = () => {
       <Flex mt="4" mb="4">
         <Heading>List of events</Heading>
         <Spacer />
+
+        {/* NEW EVENT BUTTON */}
         <Button>
           <Link to={"/new-event"}>New event</Link>
         </Button>
       </Flex>
 
+      {/* SEACHBAR */}
       <Input
         mb="2"
         placeholder="Search events"
@@ -62,26 +66,30 @@ export const EventsPage = () => {
       />
 
       <SimpleGrid minChildWidth="250px" gap={6}>
+        {/* FILTER EVENTS ON TITLE */}
         {events
           .filter((event) => {
             const nameMatch = event.title
               .toLowerCase()
               .includes(search.toLowerCase());
 
+            {/* FILTER EVENTS ON CATEGORY */ }
             const categoryMatch = Array.isArray(event.categoryIds)
               ? event.categoryIds
-                  .map(
-                    (categoryId) =>
-                      categories.find((category) => category.id === categoryId)
-                        ?.name
-                  )
-                  .some((categoryName) =>
-                    categoryName.toLowerCase().includes(search.toLowerCase())
-                  )
+                .map(
+                  (categoryId) =>
+                    categories.find((category) => category.id === categoryId)
+                      ?.name
+                )
+                .some((categoryName) =>
+                  categoryName.toLowerCase().includes(search.toLowerCase())
+                )
               : false;
 
             return nameMatch || categoryMatch;
           })
+
+          // MAP ALL EVENTS AND THE DETAILS
           .map((event) => (
             <Link key={event.id} to={`/event/${event.id}`}>
               <Card mt="2" mb="2" h="450px">

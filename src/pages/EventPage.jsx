@@ -12,7 +12,7 @@ import {
   GridItem,
 } from "@chakra-ui/react";
 
-// Load page and data
+// LOAD DATA FROM JSON FILE & GET THE RIGHT DATE FROM THE SELECTED EVENT
 export const loader = async ({ params }) => {
   const users = await fetch("http://localhost:3000/users");
   const event = await fetch(`http://localhost:3000/events/${params.eventId}`);
@@ -25,7 +25,7 @@ export const loader = async ({ params }) => {
   };
 };
 
-// Format event time
+// FORMAT EVENT TIME TO STRING
 const formatDateTime = (timeString) => {
   const date = new Date(timeString);
 
@@ -37,9 +37,11 @@ const formatDateTime = (timeString) => {
   return formatter.format(date);
 };
 
+// USE DATA FROM JSON FILE
 export const EventPage = () => {
   const { users, event, categories } = useLoaderData();
 
+  // USE STATE FOR EDIT MODAL & DELETE DIALOG
   const [editOpen, setEditOpen] = useState(false);
   const openEdit = () => {
     setEditOpen(true);
@@ -56,8 +58,10 @@ export const EventPage = () => {
     setDeleteOpen(false);
   };
 
+  // NAVIGATION
   const navigate = useNavigate();
 
+  // DELETE EVENT
   const deleteEvent = () => {
     fetch(`http://localhost:3000/events/${event.id}`, {
       method: "DELETE",
@@ -66,6 +70,7 @@ export const EventPage = () => {
     });
   };
 
+  // SHOW EVENT DETAILS
   return (
     <>
       <Grid templateColumns="repeat(2, 1fr)" gap={2}>
@@ -128,6 +133,7 @@ export const EventPage = () => {
           </Button>
         </div>
 
+        {/* EDIT MODAL */}
         {editOpen && (
           <>
             <ModalComponent
@@ -140,6 +146,7 @@ export const EventPage = () => {
           </>
         )}
 
+        {/* DELETE DIALOG */}
         {deleteOpen && (
           <>
             <AlertDelete
